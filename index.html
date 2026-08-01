@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TITAN LMS - Taj Institute of Information Technology</title>
+  <meta name="description" content="TITAN LMS - Official Student, Teacher & Admin Portal for Taj Institute of Information Technology.">
+  
+  <!-- CSS Design System -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- CALENDAR EVENT DETAIL MODAL DIALOG -->
+    <div class="auth-page-wrapper" id="calendarEventDetailModal" style="display: none; background: rgba(15, 45, 105, 0.4); backdrop-filter: blur(4px); z-index: 2000;">
+      <div class="auth-card" style="max-width: 460px; text-align: left; padding: 28px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="circle-icon-box lg"><i data-lucide="calendar"></i></div>
+            <div>
+              <h2 style="font-size: 17px; font-weight: 800; color: var(--navy-primary);" id="eventModalTitle">Event Details</h2>
+              <div style="font-size: 11px; color: var(--text-muted);" id="eventModalSub">Academic Schedule Event</div>
+            </div>
+          </div>
+          <button class="icon-btn" onclick="closeCalendarEventDetailModal()"><i data-lucide="x"></i></button>
+        </div>
+
+        <div class="info-list-group" style="width: 100%; margin-bottom: 20px;">
+          <div class="info-item-row"><span class="info-label">Event Title</span><span class="info-value" id="eventModalName">Pakistan Independence Day</span></div>
+          <div class="info-item-row"><span class="info-label">Date & Time</span><span class="info-value" id="eventModalDateTime">14 Aug 2026 • Institute Holiday</span></div>
+          <div class="info-item-row"><span class="info-label">Category</span><span class="info-value" id="eventModalCategory">Institute Holiday</span></div>
+          <div class="info-item-row"><span class="info-label">Status</span><span class="status-badge" id="eventModalStatusBadge" style="background:#FEF3C7; color:#B88E35; border:1px solid #D4A64A;">Gold Holiday Badge</span></div>
+          <div class="info-item-row"><span class="info-label">Target Audience</span><span class="info-value">All Enrolled Students & Faculty</span></div>
+          <div class="info-item-row"><span class="info-label">Institution</span><span class="info-value">Taj Institute of Information Technology</span></div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; width: 100%;">
+          <button class="btn-secondary" onclick="closeCalendarEventDetailModal()">Close</button>
+          <button class="btn-primary" onclick="showToast('Event reminder set!')">Set Reminder 🔔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGOUT CONFIRMATION MODAL DIALOG -->
+    <div class="auth-page-wrapper" id="logoutConfirmModal" style="display: none; background: rgba(15, 45, 105, 0.4); backdrop-filter: blur(4px); z-index: 2000;">
+      <div class="auth-card" style="max-width: 400px; text-align: center; padding: 28px;">
+        <div class="circle-icon-box lg" style="margin-bottom: 14px; background: #FEF2F2; border-color: #EF4444;">
+          <i data-lucide="log-out" style="width: 22px; height: 22px; color: #DC2626;"></i>
+        </div>
+        <h2 style="font-size: 18px; font-weight: 800; color: var(--navy-primary); margin-bottom: 6px;">Logout</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Are you sure you want to sign out of your TITAN LMS account?</p>
+
+        <div style="display: flex; gap: 12px; width: 100%;">
+          <button class="btn-secondary" style="flex: 1;" onclick="closeLogoutModal()">Cancel</button>
+          <button class="btn-primary" style="flex: 1; background: #DC2626; border-color: #DC2626;" onclick="executeLogout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE ANNOUNCEMENT MODAL DIALOG -->
+    <div class="auth-page-wrapper" id="createAnnouncementModal" style="display: none; background: rgba(15, 45, 105, 0.4); backdrop-filter: blur(4px); z-index: 2000;">
+      <div class="auth-card" style="max-width: 500px; text-align: left; padding: 28px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="circle-icon-box lg"><i data-lucide="bell"></i></div>
+            <div>
+              <h2 style="font-size: 17px; font-weight: 800; color: var(--navy-primary);">Create New Announcement</h2>
+              <div style="font-size: 11px; color: var(--text-muted);">Publish notice for students</div>
+            </div>
+          </div>
+          <button class="icon-btn" onclick="closeCreateAnnouncementModal()"><i data-lucide="x"></i></button>
+        </div>
+
+        <form onsubmit="handleCreateAnnouncementSubmit(event)" style="width: 100%;">
+          <div class="form-group">
+            <label class="form-label">Announcement Title</label>
+            <input type="text" id="annTitleInput" class="form-input" placeholder="e.g. Assignment 2 Submission Deadline Extended" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Course / Target Track</label>
+            <select id="annCourseSelect" class="form-select">
+              <option selected>Web & App Development • Batch 08</option>
+              <option>All Enrolled Students</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description / Announcement Body</label>
+            <textarea id="annDescInput" class="form-textarea" placeholder="Enter complete announcement details here..." required style="min-height: 100px;"></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+            <button type="button" class="btn-secondary" onclick="closeCreateAnnouncementModal()">Cancel</button>
+            <button type="submit" class="btn-primary">📢 Publish Announcement</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- STUDENT PROFILE MODAL DIALOG -->
+    <div class="auth-page-wrapper" id="studentProfileModal" style="display: none; background: rgba(15, 45, 105, 0.4); backdrop-filter: blur(4px); z-index: 2000;">
+      <div class="auth-card" style="max-width: 520px; text-align: left; padding: 28px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="circle-icon-box lg"><i data-lucide="user"></i></div>
+            <div>
+              <h2 style="font-size: 18px; font-weight: 800; color: var(--navy-primary);" id="modalStudentName">Student Profile</h2>
+              <div style="font-size: 11px; color: var(--text-muted);" id="modalStudentSub">Student Information</div>
+            </div>
+          </div>
+          <button class="icon-btn" onclick="closeStudentProfileModal()"><i data-lucide="x"></i></button>
+        </div>
+
+        <div class="info-list-group" style="width: 100%; margin-bottom: 20px;">
+          <div class="info-item-row"><span class="info-label">Student ID</span><span class="info-value" id="modalProfId">TITAN-2026-1024</span></div>
+          <div class="info-item-row"><span class="info-label">Enrolled Course</span><span class="info-value" id="modalProfCourse">Web & App Development</span></div>
+          <div class="info-item-row"><span class="info-label">Batch</span><span class="info-value" id="modalProfBatch">Batch 08</span></div>
+          <div class="info-item-row"><span class="info-label">Email Address</span><span class="info-value" id="modalProfEmail">ahmed.student@titan.edu.pk</span></div>
+          <div class="info-item-row"><span class="info-label">Phone Number</span><span class="info-value" id="modalProfPhone">+92 3001234567</span></div>
+          <div class="info-item-row"><span class="info-label">Enrollment Date</span><span class="info-value" id="modalProfEnrollDate">15 Jul 2026</span></div>
+          <div class="info-item-row"><span class="info-label">Attendance Summary</span><span class="info-value" style="color: #059669;" id="modalProfAttn">96%</span></div>
+          <div class="info-item-row"><span class="info-label">Course Progress</span><span class="info-value" style="color: var(--gold-accent);" id="modalProfProgress">38%</span></div>
+          <div class="info-item-row"><span class="info-label">Average Quiz Score</span><span class="info-value" id="modalProfQuiz">80%</span></div>
+          <div class="info-item-row"><span class="info-label">Assignment Status</span><span class="info-value" id="modalProfAssign">Submitted</span></div>
+          <div class="info-item-row"><span class="info-label">Account Status</span><span class="status-badge present" id="modalProfStatus">Active</span></div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; width: 100%;">
+          <button class="btn-secondary" onclick="closeStudentProfileModal()">Close</button>
+          <button class="btn-primary" id="modalProfMsgBtn">Send Direct Message →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD GITHUB LINK MODAL DIALOG -->
+    <div class="auth-page-wrapper" id="addGithubLinkModal" style="display: none; background: rgba(15, 45, 105, 0.4); backdrop-filter: blur(4px); z-index: 2000;">
+      <div class="auth-card" style="max-width: 480px; text-align: left; padding: 28px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+          <h2 style="font-size: 18px; font-weight: 800; color: var(--navy-primary);">Add GitHub Repository Link</h2>
+          <button class="icon-btn" onclick="closeAddGithubLinkModal()"><i data-lucide="x"></i></button>
+        </div>
+
+        <form onsubmit="handleAddGithubLinkSubmit(event)" style="width: 100%;">
+          <div class="form-group">
+            <label class="form-label">Repository Name</label>
+            <input type="text" id="githubRepoNameInput" class="form-input" placeholder="e.g. react-19-custom-hooks-demo" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">GitHub Repository URL</label>
+            <input type="url" id="githubRepoUrlInput" class="form-input" placeholder="https://github.com/username/repository" required>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;">
+            <button type="button" class="btn-secondary" onclick="closeAddGithubLinkModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Add Link →</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- STUDENT MESSAGE MODAL DIALOG -->
+    <div class="auth-page-wrapper" id="studentMessageModal" style="display: none; background: rgba(15, 45, 105, 0.4); backdrop-filter: blur(4px); z-index: 2000;">
+      <div class="auth-card" style="max-width: 480px; text-align: left; padding: 28px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="circle-icon-box lg"><i data-lucide="message-square"></i></div>
+            <div>
+              <h2 style="font-size: 16px; font-weight: 800; color: var(--navy-primary);" id="msgModalStudentName">Send Message</h2>
+              <div style="font-size: 11px; color: var(--text-muted);" id="msgModalStudentSub">Direct Student Messenger</div>
+            </div>
+          </div>
+          <button class="icon-btn" onclick="closeStudentMessageModal()"><i data-lucide="x"></i></button>
+        </div>
+
+        <form onsubmit="handleSendStudentMessageSubmit(event)" style="width: 100%;">
+          <div class="form-group">
+            <label class="form-label">Message Content</label>
+            <textarea class="form-textarea" id="studentMessageInput" placeholder="Type your message..." required style="min-height: 110px;"></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+            <button type="button" class="btn-secondary" onclick="closeStudentMessageModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Send Message 🚀</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- AUTHENTICATION MODULE FULL SCREEN VIEWS -->
+    <div class="auth-page-wrapper view-page" id="view-login">
+      <div class="auth-card">
+        <img src="C:/Users/AVD SOLUTIONS/.gemini/antigravity/brain/1b904de7-de4f-4d87-9404-27c53df21cca/.user_uploaded/media__1785530950757.png" alt="TITAN Official Crest Logo" class="auth-logo-img">
+        <div class="auth-institute-title">TAJ INSTITUTE OF INFORMATION TECHNOLOGY</div>
+        
+        <h1 class="auth-heading">Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to access your TITAN LMS account.</p>
+
+        <div class="role-tab-bar">
+          <button class="role-tab-btn active" id="tab-student" onclick="setAuthRole('student')"><span>🎓 Student</span></button>
+          <button class="role-tab-btn" id="tab-teacher" onclick="setAuthRole('teacher')"><span>👨‍🏫 Teacher</span></button>
+          <button class="role-tab-btn" id="tab-admin" onclick="setAuthRole('admin')"><span>👨‍💼 Admin</span></button>
+        </div>
+
+        <form onsubmit="handleLoginSubmit(event)" style="width: 100%;">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="loginEmail" class="form-input" placeholder="ahmed.student@titan.edu.pk" value="ahmed.student@titan.edu.pk" required>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="form-label" style="margin-bottom: 0;">Password</label>
+              <a href="#/forgot-password" style="font-size: 11px; color: var(--gold-accent); text-decoration: none; font-weight: 700;">Forgot Password?</a>
+            </div>
+            <div class="password-input-wrapper">
+              <input type="password" id="loginPassword" class="form-input" placeholder="••••••••••••" value="password123" required>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('loginPassword', 'eye-icon-login')">
+                <i data-lucide="eye" id="eye-icon-login" style="width: 16px; height: 16px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); cursor: pointer;">
+              <input type="checkbox" id="rememberMe" checked style="accent-color: var(--navy-primary);">
+              <span>Remember Me</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; min-height: 42px; font-size: 14px;">Sign In →</button>
+        </form>
+
+        <button class="social-btn-google" onclick="loginWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="admin-notice-box">
+          Need an account? Please contact the Administrator.
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: FORGOT PASSWORD -->
+    <div class="auth-page-wrapper view-page" id="view-forgot-password">
+      <div class="auth-card">
+        <img src="C:/Users/AVD SOLUTIONS/.gemini/antigravity/brain/1b904de7-de4f-4d87-9404-27c53df21cca/.user_uploaded/media__1785530950757.png" alt="TITAN Official Crest Logo" class="auth-logo-img">
+        <h1 class="auth-heading">Forgot Password</h1>
+        <p class="auth-subtitle">Enter your registered email address to receive an OTP verification code.</p>
+
+        <form onsubmit="handleSendOTP(event)" style="width: 100%;">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="forgotEmail" class="form-input" placeholder="ahmed.student@titan.edu.pk" required>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; min-height: 42px; font-size: 14px; margin-top: 10px;">Send OTP Code →</button>
+        </form>
+
+        <div style="margin-top: 18px;">
+          <a href="#/login" style="font-size: 12px; color: var(--navy-primary); font-weight: 700; text-decoration: none;">← Back to Sign In</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: OTP VERIFICATION -->
+    <div class="auth-page-wrapper view-page" id="view-otp">
+      <div class="auth-card">
+        <img src="C:/Users/AVD SOLUTIONS/.gemini/antigravity/brain/1b904de7-de4f-4d87-9404-27c53df21cca/.user_uploaded/media__1785530950757.png" alt="TITAN Official Crest Logo" class="auth-logo-img">
+        <h1 class="auth-heading">Verify OTP Code</h1>
+        <p class="auth-subtitle">Enter the 6-digit OTP code sent to your email (Default code: <strong>123456</strong>).</p>
+
+        <form onsubmit="handleVerifyOTP(event)" style="width: 100%;">
+          <div class="form-group">
+            <label class="form-label">6-Digit Verification Code</label>
+            <input type="text" id="otpCode" class="form-input" placeholder="123456" maxlength="6" style="letter-spacing: 4px; font-size: 18px; text-align: center; font-weight: 800;" required>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; min-height: 42px; font-size: 14px; margin-top: 10px;">Verify & Continue →</button>
+        </form>
+
+        <div style="margin-top: 18px;">
+          <a href="#/forgot-password" style="font-size: 12px; color: var(--navy-primary); font-weight: 700; text-decoration: none;">← Back</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: RESET PASSWORD -->
+    <div class="auth-page-wrapper view-page" id="view-reset-password">
+      <div class="auth-card">
+        <img src="C:/Users/AVD SOLUTIONS/.gemini/antigravity/brain/1b904de7-de4f-4d87-9404-27c53df21cca/.user_uploaded/media__1785530950757.png" alt="TITAN Official Crest Logo" class="auth-logo-img">
+        <h1 class="auth-heading">Reset Password</h1>
+        <p class="auth-subtitle">Enter your new secure password below.</p>
+
+        <form onsubmit="handleSaveNewPassword(event)" style="width: 100%;">
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="newPass" class="form-input" placeholder="••••••••••••" required>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('newPass', 'eye-icon-new')">
+                <i data-lucide="eye" id="eye-icon-new" style="width: 16px; height: 16px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="confirmNewPass" class="form-input" placeholder="••••••••••••" required>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirmNewPass', 'eye-icon-confirm')">
+                <i data-lucide="eye" id="eye-icon-confirm" style="width: 16px; height: 16px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; min-height: 42px; font-size: 14px; margin-top: 10px;">Update Password →</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW: PASSWORD UPDATED SUCCESS -->
+    <div class="auth-page-wrapper view-page" id="view-password-success">
+      <div class="auth-card" style="text-align: center;">
+        <div class="circle-icon-box xl" style="margin-bottom: 16px; background: #ECFDF5; border-color: #10B981;">
+          <i data-lucide="check" style="color: #059669; width: 28px; height: 28px;"></i>
+        </div>
+        <h1 class="auth-heading">Password Updated</h1>
+        <p class="auth-subtitle">Your password has been changed successfully. You can now sign in with your new credentials.</p>
+
+        <a href="#/login" class="btn-primary" style="width: 100%; min-height: 42px; font-size: 14px; text-decoration: none;">Return to Sign In →</a>
+      </div>
+    </div>
+
+    <!-- TEACHER PANEL SIDEBAR -->
+    <aside class="sidebar" id="teacherSidebar" style="display: none;">
+      <div>
+        <div class="brand-container">
+          <img src="C:/Users/AVD SOLUTIONS/.gemini/antigravity/brain/1b904de7-de4f-4d87-9404-27c53df21cca/.user_uploaded/media__1785530950757.png" alt="TITAN Official Crest Logo" class="brand-logo-img">
+          <div class="institute-title">TAJ INSTITUTE OF INFORMATION TECHNOLOGY</div>
+        </div>
+
+        <nav class="nav-menu">
+          <a class="nav-item" data-teacher-view="teacher-dashboard" href="#/teacher/dashboard"><div class="nav-item-left"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-my-courses" href="#/teacher/my-courses"><div class="nav-item-left"><i data-lucide="book-open"></i><span>My Courses</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-course-content" href="#/teacher/course-content"><div class="nav-item-left"><i data-lucide="folder"></i><span>Course Content</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-assignments" href="#/teacher/assignments"><div class="nav-item-left"><i data-lucide="file-text"></i><span>Assignments</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-quizzes" href="#/teacher/quizzes"><div class="nav-item-left"><i data-lucide="help-circle"></i><span>Quizzes</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-live-classes" href="#/teacher/live-classes"><div class="nav-item-left"><i data-lucide="video"></i><span>Live Classes</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-attendance" href="#/teacher/attendance"><div class="nav-item-left"><i data-lucide="calendar-check"></i><span>Attendance</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-students" href="#/teacher/students"><div class="nav-item-left"><i data-lucide="users"></i><span>Students</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-certificates" href="#/teacher/certificates"><div class="nav-item-left"><i data-lucide="award"></i><span>Certificates</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-announcements" href="#/teacher/announcements"><div class="nav-item-left"><i data-lucide="bell"></i><span>Announcements</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-messages" href="#/teacher/messages"><div class="nav-item-left"><i data-lucide="message-square"></i><span>Messages</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-calendar" href="#/teacher/calendar"><div class="nav-item-left"><i data-lucide="calendar"></i><span>Calendar</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-resources" href="#/teacher/resources"><div class="nav-item-left"><i data-lucide="hard-drive"></i><span>Course Resources</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-profile" href="#/teacher/profile"><div class="nav-item-left"><i data-lucide="user"></i><span>Profile</span></div></a>
+          <a class="nav-item" data-teacher-view="teacher-settings" href="#/teacher/settings"><div class="nav-item-left"><i data-lucide="settings"></i><span>Settings</span></div></a>
+          <a class="nav-item" onclick="confirmLogout()" style="color: var(--navy-primary); margin-top: 8px;"><div class="nav-item-left"><i data-lucide="log-out"></i><span>Logout</span></div></a>
+        </nav>
+      </div>
+
+      <div class="sidebar-user-card" style="margin-top: 16px;">
+        <div class="circle-icon-box sm"><i data-lucide="user"></i></div>
+        <div>
+          <div class="user-name-sm">Engr. Tariq Mehmood</div>
+          <div class="user-role-sm">Instructor</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-wrapper" id="teacherMainWrapper" style="display: none;">
+      <header class="top-header">
+        <!-- Global Search Bar with Real-time Floating Dropdown Results -->
+        <div class="search-trigger-box" style="position: relative;">
+          <i data-lucide="search" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+          <input type="text" id="teacherGlobalSearchInput" placeholder="Search modules, students, assignments..." style="border: none; background: transparent; padding: 0; outline: none; flex: 1; font-size: 13px; color: var(--text-dark); font-family: var(--font-family);" oninput="handleTeacherGlobalSearch(event)" onfocus="handleTeacherGlobalSearch(event)" autocomplete="off">
+          
+          <!-- Floating Search Dropdown Panel -->
+          <div class="navbar-dropdown-panel search-results-dropdown" id="teacherSearchDropdownPanel" style="display: none;">
+            <div id="teacherSearchResultsContainer"></div>
+          </div>
+        </div>
+
+        <div class="header-actions" style="display: flex; gap: 12px; align-items: center;">
+          <!-- Notification Bell Button & Dropdown Panel -->
+          <div style="position: relative;">
+            <button class="icon-btn" id="teacherNotificationBtn" title="Notifications" onclick="toggleTeacherNotificationDropdown(event)">
+              <i data-lucide="bell"></i>
+              <span class="unread-count-badge" id="teacherNotificationBadge" style="position: absolute; top: -4px; right: -4px; font-size: 9px; padding: 2px 5px;">4</span>
+            </button>
+
+            <!-- Floating Notification Dropdown Panel -->
+            <div class="navbar-dropdown-panel" id="teacherNotificationDropdownPanel" style="display: none; width: 340px; right: 0;">
+              <div style="padding: 10px 14px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: flex-end; align-items: center; background: #FFFFFF;">
+                <button class="btn-secondary btn-sm" style="font-size: 11px; padding: 3px 8px; font-weight: 700; color: var(--navy-primary);" onclick="markAllNotificationsAsRead()">✔ Mark All as Read</button>
+              </div>
+
+              <div id="teacherNotificationsContainer" style="max-height: 320px; overflow-y: auto;">
+                <!-- Dynamically rendered via app.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages Button & Dropdown Panel -->
+          <div style="position: relative;">
+            <button class="icon-btn" id="teacherHeaderMessagesBtn" title="Messages" onclick="toggleTeacherMessagesDropdown(event)">
+              <i data-lucide="message-square"></i>
+              <span class="unread-count-badge" id="teacherHeaderMessagesBadge" style="position: absolute; top: -4px; right: -4px; font-size: 9px; padding: 2px 5px;">5</span>
+            </button>
+
+            <!-- Floating Messages Dropdown Panel -->
+            <div class="navbar-dropdown-panel" id="teacherMessagesDropdownPanel" style="display: none; width: 340px; right: 0;">
+              <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-main);">
+                <span style="font-size: 13px; font-weight: 800; color: var(--navy-primary);">Recent Messages</span>
+                <span style="font-size: 11px; color: var(--text-muted);">Unread Messages</span>
+              </div>
+
+              <div id="teacherHeaderMessagesContainer" style="max-height: 280px; overflow-y: auto;">
+                <!-- Dynamically rendered via app.js -->
+              </div>
+
+              <div style="padding: 10px; border-top: 1px solid var(--border-color); text-align: center; background: #FFFFFF;">
+                <button class="btn-primary btn-sm" style="width: 100%;" onclick="openAllTeacherMessages()">View All Messages →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Profile Header & Floating Dropdown Menu -->
+          <div style="position: relative;">
+            <div class="header-user-profile" id="teacherHeaderUserProfile" onclick="toggleTeacherProfileDropdown(event)" style="cursor: pointer;">
+              <div class="circle-icon-box sm"><i data-lucide="user"></i></div>
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--navy-primary);">Engr. Tariq Mehmood</div>
+                <div style="font-size: 10px; font-weight: 700; color: var(--gold-accent);">Faculty Instructor</div>
+              </div>
+              <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+            </div>
+
+            <!-- Small Floating Profile Dropdown Menu -->
+            <div class="profile-dropdown-menu" id="teacherProfileMenuDropdown" style="display: none;">
+              <div class="profile-dropdown-item" onclick="selectTeacherProfileDropdownOption('profile')">
+                <i data-lucide="user"></i>
+                <span>My Profile</span>
+              </div>
+              <div class="profile-dropdown-item" onclick="selectTeacherProfileDropdownOption('settings')">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+              </div>
+              <div class="profile-dropdown-item" onclick="selectTeacherProfileDropdownOption('password')">
+                <i data-lucide="lock"></i>
+                <span>Change Password</span>
+              </div>
+              <div class="profile-dropdown-item logout" onclick="selectTeacherProfileDropdownOption('logout')">
+                <i data-lucide="log-out"></i>
+                <span>Sign Out</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <!-- TEACHER 1: DASHBOARD -->
+        <div class="view-page" id="view-teacher-dashboard">
+          <section class="welcome-hero-card">
+            <h1 class="welcome-heading">Welcome Back, Engr. Tariq Mehmood</h1>
+            <div class="welcome-enrolled-box">
+              <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Faculty Instructor for Track:</div>
+              <div class="welcome-course-name">Web & App Development • Batch 08</div>
+            </div>
+          </section>
+
+          <section class="teacher-stats-grid-8">
+            <div class="stat-card"><div class="stat-number">1</div><div class="stat-title">Assigned Courses</div></div>
+            <div class="stat-card"><div class="stat-number">45</div><div class="stat-title">Total Students</div></div>
+            <div class="stat-card"><div class="stat-number">1</div><div class="stat-title">Today's Live Classes</div></div>
+            <div class="stat-card"><div class="stat-number">12</div><div class="stat-title">Pending Assignments</div></div>
+            <div class="stat-card"><div class="stat-number">3</div><div class="stat-title">Pending Quiz Evaluations</div></div>
+            <div class="stat-card"><div class="stat-number">96%</div><div class="stat-title">Attendance Today</div></div>
+            <div class="stat-card"><div class="stat-number">0</div><div class="stat-title">Certificates Issued</div></div>
+            <div class="stat-card"><div class="stat-number">8</div><div class="stat-title">Active Announcements</div></div>
+          </section>
+
+          <div class="card-box">
+            <div class="section-header"><h3 class="section-title">Faculty Quick Actions</h3></div>
+            <div class="quick-actions-row">
+              <button class="btn-primary" onclick="switchView('teacher-assignments')">➕ Create Assignment</button>
+              <button class="btn-primary" onclick="switchView('teacher-quizzes')">❓ Create Quiz</button>
+              <button class="btn-primary" onclick="switchView('teacher-live-classes')">🎥 Schedule Live Class</button>
+              <button class="btn-secondary" onclick="switchView('teacher-course-content')">📁 Upload Course Material</button>
+              <button class="btn-secondary" onclick="switchView('teacher-attendance')">📅 Mark Attendance</button>
+              <button class="btn-secondary" onclick="switchView('teacher-announcements')">📢 Post Announcement</button>
+              <button class="btn-secondary" onclick="switchView('teacher-certificates')">🎓 Generate Certificate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER 2: MY COURSES -->
+        <div class="view-page" id="view-teacher-my-courses">
+          <div class="section-header"><h2 class="section-title">Assigned Courses</h2></div>
+          <div class="course-card-minimal">
+            <div class="course-card-header">
+              <div class="circle-icon-box lg"><i data-lucide="code"></i></div>
+              <div class="course-card-details">
+                <h3 class="course-title-text">Web & App Development</h3>
+                <div class="course-meta-text"><span>Batch 08</span><span>•</span><span>45 Enrolled Students</span></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--navy-primary); margin-bottom: 4px;">
+                <span>Course Progress</span><span>38%</span>
+              </div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 38%;"></div></div>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-primary" onclick="switchView('teacher-course-content')">Manage Course →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER 3: COURSE CONTENT BUILDER -->
+        <div class="view-page" id="view-teacher-course-content">
+          <div class="section-header" style="margin-bottom: 16px;">
+            <div>
+              <h2 class="section-title">Course Content Builder</h2>
+              <p class="section-subtitle">Create, manage, and publish course modules, lecture notes, video tutorials, and learning resources for Batch 08</p>
+            </div>
+          </div>
+
+          <!-- Create & Publish New Content Card -->
+          <div class="card-box" style="padding: 24px; margin-bottom: 20px;">
+            <h3 style="font-size: 16px; font-weight: 800; color: var(--navy-primary); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">📢 Publish New Module & Lesson</h3>
+            
+            <form id="publishCourseContentForm" onsubmit="handlePublishCourseContentSubmit(event)" style="width: 100%;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label">Target Course <span style="color: #DC2626;">*</span></label>
+                  <select id="publishCourseSelect" class="form-select" required>
+                    <option value="Web & App Development • Batch 08" selected>Web & App Development • Batch 08</option>
+                    <option value="All Batches">All Active Batches</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label">Module Title / Number <span style="color: #DC2626;">*</span></label>
+                  <input type="text" id="publishModuleTitleInput" class="form-input" placeholder="e.g. Module 4 - Node.js REST APIs & Express Architecture" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Lesson Title <span style="color: #DC2626;">*</span></label>
+                <input type="text" id="publishLessonTitleInput" class="form-input" placeholder="e.g. Building Scalable RESTful Endpoints with Middleware" required>
+              </div>
+
+              <!-- File Attachment Upload Area -->
+              <div class="form-group">
+                <label class="form-label">Upload Content Material File <span style="color: #DC2626;">*</span> (PDF, PPT, DOCX, ZIP, MP4, JPG, JPEG, PNG)</label>
+                <input type="file" id="publishFileInput" class="form-input" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.jpg,.jpeg,.png,.mp4" onchange="handlePublishFileSelect(event)" style="padding: 8px 12px;">
+                
+                <!-- Attached File Status Badge Preview Bar -->
+                <div class="attachment-preview-bar" id="publishFilePreviewBar" style="display: none; margin-top: 8px;">
+                  <span>📎 Selected File: <strong id="publishFileNameText">React19_Notes.pdf</strong> (<span id="publishFileSizeText">2.8 MB</span>)</span>
+                  <button type="button" class="remove-file-btn" onclick="removePublishAttachedFile()" title="Remove file">✕</button>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+                <button type="submit" id="publishContentSubmitBtn" class="btn-primary" style="padding: 10px 24px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                  <span id="publishBtnText">Publish Content →</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Published Course Content List Container -->
+          <div style="margin-top: 24px;">
+            <div style="margin-bottom: 14px;">
+              <h3 style="font-size: 16px; font-weight: 800; color: var(--navy-primary);">Published Lessons & Course Materials</h3>
+            </div>
+
+            <div id="teacherCourseContentListContainer" style="display: flex; flex-direction: column; gap: 14px;">
+              <!-- Dynamically rendered via app.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER 4: ASSIGNMENTS -->
+        <div class="view-page" id="view-teacher-assignments">
+          <div class="section-header"><h2 class="section-title">Assignments Management</h2></div>
+          <div class="card-box" style="margin-bottom: 16px;">
+            <h3 class="section-title" style="margin-bottom: 10px;">Create Assignment</h3>
+            <div class="form-group"><label class="form-label">Assignment Title</label><input type="text" class="form-input" placeholder="Full-Stack E-Commerce API Integration"></div>
+            <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Instructions for students..."></textarea></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-input"></div>
+              <div class="form-group"><label class="form-label">Total Marks</label><input type="number" class="form-input" value="100"></div>
+            </div>
+            <button class="btn-primary" onclick="showToast('Assignment published successfully!')">Publish Assignment</button>
+          </div>
+        </div>
+
+        <!-- TEACHER 5: QUIZZES -->
+        <div class="view-page" id="view-teacher-quizzes">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Quizzes & Question Builder Module</h2>
+              <p class="section-subtitle">Web & App Development • Create Quizzes, Build Questions & Review Student Results</p>
+            </div>
+          </div>
+
+          <div class="card-box" style="margin-bottom: 18px;">
+            <h3 class="section-title" style="margin-bottom: 12px;">Create & Publish New Quiz</h3>
+            <div class="form-group">
+              <label class="form-label">Quiz Title</label>
+              <input type="text" class="form-input" placeholder="e.g. JavaScript ES6+ & React State Management Quiz" value="JavaScript ES6+ & React State Management Quiz">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+              <div class="form-group"><label class="form-label">Duration (Minutes)</label><input type="number" class="form-input" value="10"></div>
+              <div class="form-group"><label class="form-label">Passing Marks</label><input type="number" class="form-input" value="35"></div>
+              <div class="form-group"><label class="form-label">Total Marks</label><input type="number" class="form-input" value="50"></div>
+            </div>
+            <button class="btn-primary" onclick="showToast('Quiz created & settings saved successfully!')">Save Quiz Settings →</button>
+          </div>
+
+          <div class="card-box" style="margin-bottom: 18px;">
+            <div class="section-header">
+              <h3 class="section-title">Question Builder & Management</h3>
+              <button class="btn-primary btn-sm" onclick="showToast('New question template added')">➕ Add New Question</button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Select Question Type</label>
+              <select class="form-select">
+                <option selected>Multiple Choice Question (MCQ)</option>
+                <option>True / False</option>
+                <option>Short Question</option>
+                <option>Coding Question</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Question Text</label>
+              <textarea class="form-textarea" placeholder="Enter question statement here...">Which React 19 Hook is used to declare and manage reactive component state?</textarea>
+            </div>
+
+            <h4 style="font-size: 13px; font-weight: 800; color: var(--navy-primary); margin: 14px 0 8px 0;">Questions in Quiz (5 Questions)</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="list-item-card" style="padding: 12px 16px; margin: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">1. Which React 19 Hook is used to declare and manage reactive component state? (MCQ)</div>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn-secondary btn-sm" onclick="showToast('Editing Question 1...')">Edit</button>
+                  <button class="btn-secondary btn-sm" style="color:#DC2626;" onclick="showToast('Question deleted')">Delete</button>
+                </div>
+              </div>
+              <div class="list-item-card" style="padding: 12px 16px; margin: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">2. Which CSS property establishes a two-dimensional grid-based layout structure? (MCQ)</div>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn-secondary btn-sm" onclick="showToast('Editing Question 2...')">Edit</button>
+                  <button class="btn-secondary btn-sm" style="color:#DC2626;" onclick="showToast('Question deleted')">Delete</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
+              <button class="btn-primary" onclick="showToast('Quiz published to students successfully!')">🚀 Publish Quiz Now</button>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="section-header">
+              <h3 class="section-title">Student Quiz Results & Evaluation</h3>
+              <button class="btn-secondary btn-sm" onclick="showToast('Exporting Student Quiz Scores CSV...')">📥 Export Scores CSV</button>
+            </div>
+
+            <div class="attendance-table-container">
+              <table class="attendance-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Time Taken</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-weight:700; color:var(--navy-primary);">TITAN-2026-1024</td>
+                    <td style="font-weight:700;">Muhammad Ahmed</td>
+                    <td style="font-weight:800; color:var(--navy-primary);">40 / 50</td>
+                    <td style="font-weight:700;">80%</td>
+                    <td>02:45</td>
+                    <td><span class="status-badge present">PASSED</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER 6: LIVE CLASSES -->
+        <div class="view-page" id="view-teacher-live-classes">
+          <div class="section-header"><h2 class="section-title">Live Class Scheduler</h2></div>
+          <div class="card-box">
+            <div class="form-group"><label class="form-label">Topic Title</label><input type="text" class="form-input" value="React 19 & REST API Architecture Live Workshop"></div>
+            <div class="form-group"><label class="form-label">Google Meet / Zoom Link</label><input type="text" class="form-input" placeholder="https://meet.google.com/xyz-abc-def"></div>
+            <button class="btn-primary" onclick="showToast('Live Class Scheduled!')">Schedule Class</button>
+          </div>
+        </div>
+
+        <!-- TEACHER 7: ATTENDANCE -->
+        <div class="view-page" id="view-teacher-attendance">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Teacher Attendance Register (45 Students)</h2>
+              <p class="section-subtitle">Web & App Development • Batch 08 • Taj Institute of Information Technology</p>
+            </div>
+            <button class="btn-primary" onclick="showToast('Attendance register saved successfully!')">💾 Save Attendance Register</button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px;">
+            <div class="stat-card">
+              <div class="stat-number" id="attnSummaryTotal">45</div>
+              <div class="stat-title">Total Students</div>
+            </div>
+            <div class="stat-card" style="border-left: 3px solid #10B981;">
+              <div class="stat-number" style="color: #059669;" id="attnSummaryPresent">40</div>
+              <div class="stat-title">Present</div>
+            </div>
+            <div class="stat-card" style="border-left: 3px solid #EF4444;">
+              <div class="stat-number" style="color: #DC2626;" id="attnSummaryAbsent">2</div>
+              <div class="stat-title">Absent</div>
+            </div>
+            <div class="stat-card" style="border-left: 3px solid #F59E0B;">
+              <div class="stat-number" style="color: #D97706;" id="attnSummaryLate">2</div>
+              <div class="stat-title">Late</div>
+            </div>
+            <div class="stat-card" style="border-left: 3px solid #3B82F6;">
+              <div class="stat-number" style="color: #2563EB;" id="attnSummaryLeave">1</div>
+              <div class="stat-title">Leave</div>
+            </div>
+          </div>
+
+          <div class="card-box" style="margin-bottom: 16px;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <input type="text" id="attnSearchInput" class="form-input" placeholder="Search by Student Name or ID..." style="flex: 2; min-width: 200px;" oninput="filterTeacherAttendance()">
+
+              <select class="form-select" style="flex: 1; min-width: 140px;">
+                <option selected>Web & App Development</option>
+              </select>
+
+              <select id="attnBatchFilter" class="form-select" style="flex: 1; min-width: 120px;" onchange="filterTeacherAttendance()">
+                <option value="all">All Batches</option>
+                <option value="Batch 08" selected>Batch 08</option>
+              </select>
+
+              <input type="date" class="form-input" value="2026-08-01" style="flex: 1; min-width: 130px;">
+            </div>
+          </div>
+
+          <div class="attendance-table-container">
+            <table class="attendance-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Student Name</th>
+                  <th>Course</th>
+                  <th>Batch</th>
+                  <th>Attendance Status</th>
+                  <th>Attendance Toggle</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="teacherAttendanceTableBody">
+                <!-- Dynamically populated via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEACHER 8: STUDENTS (45 ENROLLED STUDENTS REGISTER) -->
+        <div class="view-page" id="view-teacher-students">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Enrolled Students Roster (45 Total)</h2>
+              <p class="section-subtitle">Web & App Development • Batch 08 • Taj Institute of Information Technology</p>
+            </div>
+          </div>
+
+          <div class="card-box" style="margin-bottom: 16px;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <input type="text" id="studentSearchInput" class="form-input" placeholder="Search by Student Name or Student ID..." style="flex: 2; min-width: 220px;" oninput="filterTeacherStudents()">
+              
+              <select id="studentBatchFilter" class="form-select" style="flex: 1; min-width: 140px;" onchange="filterTeacherStudents()">
+                <option value="all">All Batches</option>
+                <option value="Batch 08" selected>Batch 08</option>
+              </select>
+
+              <select id="studentStatusFilter" class="form-select" style="flex: 1; min-width: 140px;" onchange="filterTeacherStudents()">
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="attendance-table-container">
+            <table class="attendance-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Student Name</th>
+                  <th>Course</th>
+                  <th>Batch</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Attendance</th>
+                  <th>Progress</th>
+                  <th>Avg Quiz</th>
+                  <th>Assignment</th>
+                  <th>Enrolled</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teacherStudentsTableBody">
+                <!-- Dynamically populated via app.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+            <div id="teacherStudentsCounter" style="font-size: 12px; color: var(--text-muted); font-weight: 700;">
+              Showing 1-10 of 45 Students
+            </div>
+            <div id="teacherStudentsPagination" style="display: flex; gap: 6px;"></div>
+          </div>
+        </div>
+
+        <!-- TEACHER 9: CERTIFICATES -->
+        <div class="view-page" id="view-teacher-certificates">
+          <div class="section-header"><h2 class="section-title">Issue Student Certificates</h2></div>
+          <div class="card-box"><p style="font-size: 13px; color: var(--text-muted);">Select students who have completed 100% course requirements to generate digital certificates.</p></div>
+        </div>
+
+        <!-- TEACHER 10: ANNOUNCEMENTS -->
+        <div class="view-page" id="view-teacher-announcements">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Announcements & Notice Board</h2>
+              <p class="section-subtitle">Publish and manage faculty notices for Web & App Development track</p>
+            </div>
+            <button class="btn-primary" onclick="openCreateAnnouncementModal()">➕ Create Announcement</button>
+          </div>
+
+          <div id="teacherAnnouncementsListContainer" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Dynamically populated via app.js -->
+          </div>
+        </div>
+
+        <!-- TEACHER 11: MESSAGES -->
+        <div class="view-page" id="view-teacher-messages">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Course Messages</h2>
+              <p class="section-subtitle">Direct message portal with Students and Administrator.</p>
+            </div>
+          </div>
+
+          <div class="chat-layout-2col">
+            <div class="chat-sidebar-panel">
+              <div class="chat-sidebar-header">
+                <input type="text" id="teacherChatSearchInput" class="form-input" placeholder="Search by Name or Student ID..." oninput="filterTeacherConversations()">
+                
+                <div style="display: flex; gap: 4px; margin-top: 10px;">
+                  <button class="role-tab-btn active" id="chat-tab-all" onclick="setTeacherChatFilter('all')">All (46)</button>
+                  <button class="role-tab-btn" id="chat-tab-unread" onclick="setTeacherChatFilter('unread')">Unread</button>
+                  <button class="role-tab-btn" id="chat-tab-admin" onclick="setTeacherChatFilter('admin')">Admin</button>
+                </div>
+              </div>
+
+              <div class="chat-conversation-list" id="teacherChatConversationList">
+                <!-- Dynamically rendered via app.js -->
+              </div>
+            </div>
+
+            <div class="chat-main-panel">
+              <div class="chat-main-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="position: relative;">
+                    <div class="circle-icon-box lg" id="chatActiveAvatar"><i data-lucide="user"></i></div>
+                    <div class="online-dot-badge online" id="chatActiveOnlineDot"></div>
+                  </div>
+                  <div>
+                    <h3 style="font-size: 15px; font-weight: 800; color: var(--navy-primary);" id="chatActiveTitle">Muhammad Ahmed</h3>
+                    <div style="font-size: 11px; color: var(--text-muted);" id="chatActiveSub">TITAN-2026-1024 • Web & App Development</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                  <button class="icon-btn" title="Student Profile" id="chatHeaderProfileBtn" onclick="openStudentProfileModal('TITAN-2026-1024')"><i data-lucide="info"></i></button>
+                </div>
+              </div>
+
+              <div class="chat-messages-body" id="teacherChatMessagesContainer">
+                <!-- Dynamically rendered isolated chat bubbles -->
+              </div>
+
+              <div class="typing-indicator" id="teacherChatTypingIndicator" style="display: none;">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <span id="typingIndicatorText">Student is typing...</span>
+              </div>
+
+              <div style="position: relative; width: 100%;">
+                <form onsubmit="handleSendTeacherChatMessage(event)" class="chat-input-bar" id="teacherChatComposerForm" style="flex-direction: column; align-items: stretch; gap: 6px;">
+                  <!-- File Attachment Preview Bar -->
+                  <div class="attachment-preview-bar" id="teacherChatAttachmentPreviewBar" style="display: none;">
+                    <span>📎 Attached File: <strong id="attachedFileNameText">filename.pdf</strong> (<span id="attachedFileSizeText">0 KB</span>)</span>
+                    <button type="button" class="remove-file-btn" onclick="removeTeacherChatAttachedFile()" title="Remove file">✕</button>
+                  </div>
+
+                  <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                    <input type="file" id="teacherChatFileInput" accept=".pdf,.docx,.ppt,.pptx,.xlsx,.zip,.jpg,.jpeg,.png" style="display: none;" onchange="handleTeacherChatFileSelect(event)">
+                    
+                    <button type="button" class="icon-btn" style="border: none; background: transparent; cursor: pointer; font-size: 16px;" title="Attach File" onclick="document.getElementById('teacherChatFileInput').click()">📎</button>
+                    
+                    <!-- Emoji Button with Anchored Popover -->
+                    <div style="position: relative; display: inline-block;">
+                      <button type="button" class="icon-btn" id="teacherChatEmojiBtn" style="border: none; background: transparent; cursor: pointer; font-size: 16px;" title="Insert Emoji" onclick="toggleTeacherChatEmojiPicker(event)">😊</button>
+
+                      <!-- Anchored Emoji Picker Popover -->
+                      <div class="emoji-picker-popover" id="teacherChatEmojiPicker" style="display: none;">
+                        <div class="emoji-picker-grid">
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😊')">😊</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😃')">😃</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😄')">😄</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😁')">😁</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😅')">😅</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😂')">😂</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🤣')">🤣</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😉')">😉</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😍')">😍</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🥰')">🥰</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('😎')">😎</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🤔')">🤔</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🙌')">🙌</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('👏')">👏</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('👍')">👍</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🙏')">🙏</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🤝')">🤝</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('💪')">💪</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🎉')">🎉</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('✨')">✨</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🔥')">🔥</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('⭐')">⭐</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('✅')">✅</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('💯')">💯</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('📚')">📚</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('💻')">💻</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('📝')">📝</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🎯')">🎯</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('📌')">📌</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('💡')">💡</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🚀')">🚀</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('💬')">💬</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('❤️')">❤️</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('🎓')">🎓</span>
+                          <span class="emoji-picker-item" onclick="insertEmojiIntoMessage('📜')">📜</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <textarea id="teacherChatMessageInput" class="form-textarea" placeholder="Type your message..." style="flex: 1; min-height: 40px; height: 40px; max-height: 100px; resize: none; padding: 8px 12px; font-size: 13px;" autocomplete="off"></textarea>
+                    
+                    <button type="submit" class="btn-primary" style="padding: 8px 20px; font-size: 13px; font-weight: 700;">Send</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER 12: CALENDAR (FULL DYNAMIC MONTH & YEAR STATE MANAGEMENT) -->
+        <div class="view-page" id="view-teacher-calendar">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Academic Schedule Calendar</h2>
+              <p class="section-subtitle">Web & App Development • Taj Institute of Information Technology</p>
+            </div>
+            <button class="btn-primary" onclick="showToast('New event form opened')">➕ Schedule Event</button>
+          </div>
+
+          <div class="profile-grid-2col">
+            <!-- Left Column: Dynamic Monthly Calendar Grid -->
+            <div class="card-box" style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 15px; font-weight: 800; color: var(--navy-primary);" id="teacherCalendarMonthTitle">August 2026</h3>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn-secondary btn-sm" onclick="prevTeacherCalendarMonth()">← Prev</button>
+                  <button class="btn-secondary btn-sm" onclick="resetTeacherCalendarToday()">Today</button>
+                  <button class="btn-secondary btn-sm" onclick="nextTeacherCalendarMonth()">Next →</button>
+                </div>
+              </div>
+
+              <!-- Re-rendered dynamically by renderTeacherCalendarGrid() -->
+              <div class="calendar-month-grid" id="teacherCalendarMonthGrid">
+                <!-- Dynamically generated via app.js -->
+              </div>
+            </div>
+
+            <!-- Right Column: Month-Specific Upcoming Academic Events List -->
+            <div class="card-box" style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 15px; font-weight: 800; color: var(--navy-primary);">Upcoming Academic Events</h3>
+                <span style="font-size: 11px; font-weight: 700; color: var(--gold-accent);" id="teacherCalendarEventsBadge">August 2026</span>
+              </div>
+
+              <div id="teacherCalendarUpcomingList" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Dynamically rendered via app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER 13: RESOURCES LIBRARY (DYNAMIC UPLOADS & GITHUB REPOSITORIES) -->
+        <div class="view-page" id="view-teacher-resources">
+          <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 class="section-title">Course Resources Library</h2>
+              <p class="section-subtitle">Manage learning materials, lecture slides, code repositories, and reference guides for Batch 08</p>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+              <input type="file" id="teacherResourceFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.jpg,.jpeg,.png,.mp4" style="display: none;" onchange="handleTeacherResourceFileSelect(event)">
+              <button class="btn-primary" onclick="document.getElementById('teacherResourceFileInput').click()">📁 Upload File</button>
+              <button class="btn-secondary" onclick="openAddGithubLinkModal()">🔗 Add GitHub Link</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Resources List Container -->
+          <div id="teacherResourcesListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Dynamically rendered via app.js -->
+          </div>
+        </div>
+
+        <!-- TEACHER 14: REPORTS -->
+        <div class="view-page" id="view-teacher-reports">
+          <div class="section-header"><h2 class="section-title">Analytics & Performance Reports</h2></div>
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">88%</div><div class="stat-title">Avg Class Performance</div></div>
+            <div class="stat-card"><div class="stat-number">96%</div><div class="stat-title">Attendance Rate</div></div>
+          </div>
+        </div>
+
+        <!-- TEACHER 15: PROFILE -->
+        <div class="view-page" id="view-teacher-profile">
+          <div class="profile-banner-card" style="margin-bottom: 20px;">
+            <div class="profile-user-group" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="circle-icon-box xl" style="background: rgba(255, 255, 255, 0.15); color: #FFFFFF;" id="teacherProfileAvatarBox"><i data-lucide="user" style="width: 32px; height: 32px;"></i></div>
+                <div>
+                  <h1 style="font-size: 22px; font-weight: 800; color: #FFFFFF;" id="teacherProfileNameHeading">Engr. Tariq Mehmood</h1>
+                  <div style="font-size: 13px; color: var(--gold-accent); font-weight: 700; margin-top: 2px;" id="teacherProfileSubHeading">Faculty Instructor • Department of Computer Science & Web Engineering</div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn-secondary" id="editProfileHeaderBtn" style="background: rgba(255, 255, 255, 0.9); color: var(--navy-primary); border: none;" onclick="toggleTeacherProfileEditMode(true)">✏️ Edit Profile</button>
+                <button type="button" class="btn-secondary" style="background: transparent; color: #FFFFFF; border: 1px solid rgba(255, 255, 255, 0.4);" onclick="window.location.hash='#/reset-password'">🔒 Change Password</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SINGLE PROFILE DETAILS CARD WITH IN-LINE EDIT TOGGLE -->
+          <div class="card-box" style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 16px;">
+              <h3 style="font-size: 16px; font-weight: 800; color: var(--navy-primary);" id="profileCardHeadingText">Profile Details</h3>
+              <span id="editModeIndicatorBadge" style="display: none; font-size: 11px; font-weight: 700; color: var(--gold-accent);">[ EDIT MODE ]</span>
+            </div>
+
+            <!-- READ-ONLY VIEW CONTAINER -->
+            <div id="profileDetailsReadView">
+              <div class="info-list-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="info-item-row"><span class="info-label">Full Name</span><span class="info-value" style="font-weight: 700; color: var(--navy-primary);" id="profileValFullName">Engr. Tariq Mehmood</span></div>
+                <div class="info-item-row"><span class="info-label">Employee ID</span><span class="info-value" id="profileValEmpId">TITAN-FAC-2024-008</span></div>
+                <div class="info-item-row"><span class="info-label">Designation</span><span class="info-value" id="profileValDesignation">Senior Faculty Instructor / Lecturer</span></div>
+                <div class="info-item-row"><span class="info-label">Department</span><span class="info-value" id="profileValDepartment">Computer Science & Web Engineering</span></div>
+                <div class="info-item-row"><span class="info-label">Assigned Courses</span><span class="info-value" style="color: var(--navy-primary); font-weight: 700;" id="profileValCourses">Web & App Development • Batch 08</span></div>
+                <div class="info-item-row"><span class="info-label">Email Address</span><span class="info-value" id="profileValEmail">tariq.mehmood@titan.edu.pk</span></div>
+                <div class="info-item-row"><span class="info-label">Phone Number</span><span class="info-value" id="profileValPhone">+92 300 9876543</span></div>
+                <div class="info-item-row"><span class="info-label">Highest Qualification</span><span class="info-value" id="profileValQualification">M.S. Software Engineering (FAST-NUCES)</span></div>
+                <div class="info-item-row"><span class="info-label">Teaching Experience</span><span class="info-value" id="profileValExperience">8+ Years Industry & Academic Experience</span></div>
+                <div class="info-item-row"><span class="info-label">Joining Date</span><span class="info-value" id="profileValJoiningDate">15 January 2024</span></div>
+                <div class="info-item-row"><span class="info-label">Office Location</span><span class="info-value" id="profileValOfficeLocation">Faculty Block B • Office 204</span></div>
+                <div class="info-item-row"><span class="info-label">Bio / About</span><span class="info-value" id="profileValBio">Senior lecturer and lead instructor specializing in modern Web Development, React, and REST APIs.</span></div>
+              </div>
+            </div>
+
+            <!-- IN-LINE EDITABLE FORM CONTAINER (OPENS IN THE SAME CARD) -->
+            <div id="profileDetailsEditView" style="display: none;">
+              <form id="teacherInlineEditProfileForm" onsubmit="handleSaveTeacherInlineProfile(event)">
+                <!-- Photo Upload Section -->
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 18px; padding: 14px; background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color);">
+                  <div class="circle-icon-box lg" style="width: 48px; height: 48px; font-size: 20px; flex-shrink: 0;">
+                    <i data-lucide="user"></i>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Profile Photo / Avatar</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Allowed formats: JPG, JPEG, PNG (Max 5 MB)</div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                      <input type="file" id="inlineTeacherPhotoInput" accept=".jpg,.jpeg,.png" style="display: none;" onchange="handleTeacherPhotoSelect(event)">
+                      <button type="button" class="btn-secondary btn-sm" onclick="document.getElementById('inlineTeacherPhotoInput').click()">📷 Upload Photo</button>
+                      <button type="button" class="btn-secondary btn-sm" style="color: #DC2626;" onclick="removeTeacherPhoto()">Remove</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div class="form-group">
+                    <label class="form-label">Full Name <span style="color: #DC2626;">*</span></label>
+                    <input type="text" id="inlineEditFullName" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Employee ID (Read Only)</label>
+                    <input type="text" id="inlineEditEmpId" class="form-input" readonly style="background: var(--bg-main);">
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div class="form-group">
+                    <label class="form-label">Designation <span style="color: #DC2626;">*</span></label>
+                    <input type="text" id="inlineEditDesignation" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Department <span style="color: #DC2626;">*</span></label>
+                    <input type="text" id="inlineEditDepartment" class="form-input" required>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div class="form-group">
+                    <label class="form-label">Email Address <span style="color: #DC2626;">*</span></label>
+                    <input type="email" id="inlineEditEmail" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Phone Number <span style="color: #DC2626;">*</span></label>
+                    <input type="text" id="inlineEditPhone" class="form-input" required>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div class="form-group">
+                    <label class="form-label">Highest Qualification</label>
+                    <input type="text" id="inlineEditQualification" class="form-input">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Teaching Experience</label>
+                    <input type="text" id="inlineEditExperience" class="form-input">
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div class="form-group">
+                    <label class="form-label">Joining Date (Read Only)</label>
+                    <input type="text" id="inlineEditJoiningDate" class="form-input" readonly style="background: var(--bg-main);">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Office Location (Optional)</label>
+                    <input type="text" id="inlineEditOfficeLocation" class="form-input" placeholder="e.g. Faculty Block B • Office 204">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Bio / About Instructor</label>
+                  <textarea id="inlineEditBio" class="form-textarea" placeholder="Brief professional bio..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 16px;">
+                  <button type="button" class="btn-secondary" onclick="toggleTeacherProfileEditMode(false)">Cancel</button>
+                  <button type="submit" class="btn-primary">Save</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER 16: SETTINGS -->
+        <div class="view-page" id="view-teacher-settings">
+          <div class="section-header" style="margin-bottom: 16px;">
+            <div>
+              <h2 class="section-title">Instructor Account & Portal Settings</h2>
+              <p class="section-subtitle">Manage system notifications, security, language, light mode appearance, and privacy preferences</p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- Account & General Settings -->
+            <div class="card-box" style="padding: 24px;">
+              <h3 style="font-size: 15px; font-weight: 800; color: var(--navy-primary); margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">⚙️ General & Account Settings</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label">Default Portal Language</label>
+                  <select class="form-select" id="teacherSettingsLanguage">
+                    <option selected>English (United States)</option>
+                    <option>Urdu (Pakistan)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Appearance Mode</label>
+                  <select class="form-select" id="teacherSettingsAppearance">
+                    <option selected>TITAN Light Mode (Enterprise SaaS)</option>
+                    <option disabled>Dark Mode (Locked by System Admin)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification Preferences with Toggles -->
+            <div class="card-box" style="padding: 24px;">
+              <h3 style="font-size: 15px; font-weight: 800; color: var(--navy-primary); margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">🔔 Notification Preferences</h3>
+              
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 12px; border-radius: 8px; background: var(--bg-main);">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Email Notifications</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Receive important updates and student activity alerts via email</div>
+                  </div>
+                  <input type="checkbox" id="toggleEmailNotif" checked style="width: 18px; height: 18px; accent-color: var(--navy-primary); cursor: pointer;">
+                </label>
+
+                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 12px; border-radius: 8px; background: var(--bg-main);">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">LMS In-App Notifications</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Display real-time popover alerts in the top navigation bell</div>
+                  </div>
+                  <input type="checkbox" id="toggleLmsNotif" checked style="width: 18px; height: 18px; accent-color: var(--navy-primary); cursor: pointer;">
+                </label>
+
+                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 12px; border-radius: 8px; background: var(--bg-main);">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Assignment Alerts</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Get notified when a student submits or resubmits an assignment</div>
+                  </div>
+                  <input type="checkbox" id="toggleAssignNotif" checked style="width: 18px; height: 18px; accent-color: var(--navy-primary); cursor: pointer;">
+                </label>
+
+                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 12px; border-radius: 8px; background: var(--bg-main);">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Quiz Alerts</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Notify when a student finishes an online module quiz</div>
+                  </div>
+                  <input type="checkbox" id="toggleQuizNotif" checked style="width: 18px; height: 18px; accent-color: var(--navy-primary); cursor: pointer;">
+                </label>
+
+                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 12px; border-radius: 8px; background: var(--bg-main);">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Live Class Reminders</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Send automatic 30-minute reminder before live workshops begin</div>
+                  </div>
+                  <input type="checkbox" id="toggleLiveNotif" checked style="width: 18px; height: 18px; accent-color: var(--navy-primary); cursor: pointer;">
+                </label>
+
+                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 8px 12px; border-radius: 8px; background: var(--bg-main);">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Announcement Notifications</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Broadcast notifications when new system announcements are published</div>
+                  </div>
+                  <input type="checkbox" id="toggleAnnounceNotif" checked style="width: 18px; height: 18px; accent-color: var(--navy-primary); cursor: pointer;">
+                </label>
+              </div>
+            </div>
+
+            <!-- Security & Privacy -->
+            <div class="card-box" style="padding: 24px;">
+              <h3 style="font-size: 15px; font-weight: 800; color: var(--navy-primary); margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">🔒 Security & Privacy</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Two-Factor Authentication (2FA)</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Secure your faculty account with SMS or Authenticator App OTP</div>
+                </div>
+                <button type="button" class="btn-secondary btn-sm" onclick="showToast('2FA security settings updated')">Enable 2FA</button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px;">
+              <button type="button" class="btn-secondary" onclick="resetTeacherSettings()">Reset Settings</button>
+              <button type="button" class="btn-primary" onclick="saveTeacherSettings()">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMINISTRATOR DASHBOARD VIEW -->
+    <div class="view-page" id="view-admin-dashboard" style="width: 100vw; min-height: 100vh; padding: 24px; background: var(--bg-main);">
+      <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 18px 24px; border-radius: 14px; border: 1px solid var(--border-color);">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <img src="C:/Users/AVD SOLUTIONS/.gemini/antigravity/brain/1b904de7-de4f-4d87-9404-27c53df21cca/.user_uploaded/media__1785530950757.png" alt="TITAN Logo" style="height: 40px;">
+            <div>
+              <h2 style="font-size: 18px; font-weight: 800; color: var(--navy-primary);">Administrator Control Center</h2>
+              <p style="font-size: 12px; color: var(--text-muted);">System Administrator • Taj Institute of Information Technology</p>
+            </div>
+          </div>
+          <button class="btn-secondary" onclick="confirmLogout()">Log Out 🚪</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">120</div><div class="stat-title">Total Enrolled Students</div></div>
+          <div class="stat-card"><div class="stat-number">8</div><div class="stat-title">Faculty Instructors</div></div>
+          <div class="stat-card"><div class="stat-number">6</div><div class="stat-title">Active Batches</div></div>
+        </div>
+
+        <div class="card-box">
+          <h3 class="section-title">User Account Provisioning</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Only Administrators can create new Student & Teacher accounts.</p>
+          <button class="btn-primary" onclick="alert('Account Provisioning Portal Opened')">➕ Create User Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEFT SIDEBAR (STUDENT PANEL) -->
+    <aside class="sidebar" id="appSidebar">
+      <div>
+        <div class="brand-container">
+          <img src="C:/Users/AVD SOLUTIONS/.gemini/antigravity/brain/1b904de7-de4f-4d87-9404-27c53df21cca/.user_uploaded/media__1785530950757.png" alt="TITAN Official Crest Logo" class="brand-logo-img">
+          <div class="institute-title">TAJ INSTITUTE OF INFORMATION TECHNOLOGY</div>
+        </div>
+
+        <nav class="nav-menu">
+          <a class="nav-item active" data-view="dashboard" href="#/student/dashboard"><div class="nav-item-left"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></div></a>
+          <a class="nav-item" data-view="courses" href="#/student/my-course"><div class="nav-item-left"><i data-lucide="book-open"></i><span>My Course</span></div></a>
+          <a class="nav-item" data-view="assignments" href="#/student/assignments"><div class="nav-item-left"><i data-lucide="file-text"></i><span>Assignments</span></div></a>
+          <a class="nav-item" data-view="quizzes" href="#/student/quizzes"><div class="nav-item-left"><i data-lucide="help-circle"></i><span>Quizzes</span></div></a>
+          <a class="nav-item" data-view="live" href="#/student/live-classes"><div class="nav-item-left"><i data-lucide="video"></i><span>Live Classes</span></div></a>
+          <a class="nav-item" data-view="attendance" href="#/student/attendance"><div class="nav-item-left"><i data-lucide="calendar-check"></i><span>Attendance</span></div></a>
+          <a class="nav-item" data-view="certificates" href="#/student/certificates"><div class="nav-item-left"><i data-lucide="award"></i><span>Certificates</span></div></a>
+          <a class="nav-item" data-view="announcements" href="#/student/announcements"><div class="nav-item-left"><i data-lucide="bell"></i><span>Announcements</span></div></a>
+          <a class="nav-item" data-view="messages" href="#/student/messages"><div class="nav-item-left"><i data-lucide="message-square"></i><span>Messages</span></div></a>
+          <a class="nav-item" data-view="profile" href="#/student/profile"><div class="nav-item-left"><i data-lucide="user"></i><span>Profile</span></div></a>
+          <a class="nav-item" data-view="settings" href="#/student/settings"><div class="nav-item-left"><i data-lucide="settings"></i><span>Settings</span></div></a>
+          <a class="nav-item" onclick="confirmLogout()" style="color: var(--navy-primary); margin-top: 8px;"><div class="nav-item-left"><i data-lucide="log-out"></i><span>Logout</span></div></a>
+        </nav>
+      </div>
+
+      <div class="sidebar-user-card">
+        <div class="circle-icon-box sm"><i data-lucide="user"></i></div>
+        <div>
+          <div class="user-name-sm">Muhammad Ahmed</div>
+          <div class="user-role-sm">Student</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER & TOP HEADER (STUDENT PANEL) -->
+    <div class="main-wrapper" id="appMainWrapper">
+      <header class="top-header">
+        <div class="search-trigger-box" id="globalSearchTrigger">
+          <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+          <span class="search-placeholder">Search modules...</span>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn" title="Notifications"><i data-lucide="bell"></i></button>
+          <button class="icon-btn" title="Messages" onclick="handleHeaderMessagesClick()"><i data-lucide="message-square"></i></button>
+
+          <div class="header-user-profile">
+            <div class="circle-icon-box sm"><i data-lucide="user"></i></div>
+            <div>
+              <div style="font-size: 13px; font-weight: 800; color: var(--navy-primary);">Muhammad Ahmed</div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--gold-accent);">Student</div>
+            </div>
+            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="view-page active" id="view-dashboard">
+          <main class="dashboard-main-canvas">
+            <section class="welcome-hero-card">
+              <h1 class="welcome-heading">Welcome Back, Muhammad Ahmed</h1>
+              <div class="welcome-enrolled-box">
+                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">You are currently enrolled in:</div>
+                <div class="welcome-course-name">Web & App Development</div>
+              </div>
+              <div class="welcome-meta-pills">
+                <div class="meta-pill">Current Progress: 38%</div>
+                <div class="meta-pill" style="background: rgba(255,255,255,0.15); color: #FFF; border-color: rgba(255,255,255,0.3);">Next Live Class: Today • 7:00 PM</div>
+              </div>
+            </section>
+            <section class="stats-grid">
+              <div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="book-open"></i></div></div><div class="stat-number">1</div><div class="stat-title">Enrolled Courses</div></div>
+              <div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="check-circle-2"></i></div></div><div class="stat-number">0</div><div class="stat-title">Completed Courses</div></div>
+              <div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="clock"></i></div></div><div class="stat-number">1</div><div class="stat-title">Pending Assignments</div></div>
+              <div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="video"></i></div></div><div class="stat-number" style="font-size: 22px;">Today</div><div class="stat-title">Upcoming Live Class</div></div>
+              <div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="calendar-check"></i></div></div><div class="stat-number">96%</div><div class="stat-title">Attendance</div></div>
+              <div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="trending-up"></i></div></div><div class="stat-number">38%</div><div class="stat-title">Course Progress</div></div>
+            </section>
+            <section>
+              <div class="section-header"><div><h2 class="section-title">Active Learning Path</h2><p class="section-subtitle">Web & App Development • Taj Institute of Information Technology</p></div></div>
+              <div class="course-card-minimal">
+                <div class="course-card-header"><div class="circle-icon-box lg"><i data-lucide="code"></i></div><div class="course-card-details"><h3 class="course-title-text">Web & App Development</h3><div class="course-meta-text"><span>Instructor: Engr. Tariq Mehmood</span><span>•</span><span>Course Duration: 70 Hours</span></div></div></div>
+                <div><div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--navy-primary); margin-bottom: 4px;"><span>Course Progress</span><span>38%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 38%;"></div></div></div>
+                <div style="display: flex; justify-content: flex-end;"><button class="btn-primary" onclick="alert('Resuming Web & App Development Lesson...')">Continue Learning →</button></div>
+              </div>
+            </section>
+            <section class="split-grid">
+              <div class="card-box" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+                <div class="section-header" style="padding-left: 4px; padding-right: 4px;"><h3 class="section-title">Next Live Class</h3></div>
+                <div class="live-class-two-col-card"><div class="live-class-left"><div><h4 class="live-class-title">React 19 & REST API Architecture Live Workshop</h4><div class="live-class-instructor" style="margin-top: 4px;">Instructor: Engr. Tariq Mehmood</div></div><div><button class="btn-primary btn-sm" onclick="alert('Joining TITAN Live Session...')">Join Class</button></div></div><div class="live-class-right"><span class="today-badge-top-right">TODAY</span><span class="live-class-time-tag">7:00 PM</span></div></div>
+              </div>
+              <div class="card-box" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+                <div class="section-header" style="padding-left: 4px; padding-right: 4px;"><h3 class="section-title">Next Upcoming Quiz</h3></div>
+                <div class="list-item-card" style="padding: 24px; min-height: 120px; margin-bottom: 0;"><div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; gap: 12px; flex: 1;"><div><div style="font-size: 15px; font-weight: 800; color: var(--navy-primary);">JavaScript ES6+ & React State Management Quiz</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Scheduled: Aug 05 • Duration: 25 Mins</div></div><div><button class="btn-primary btn-sm" onclick="switchView('quizzes'); startQuiz();">Start Quiz</button></div></div></div>
+              </div>
+            </section>
+            <section class="split-grid">
+              <div class="card-box"><div class="section-header"><h3 class="section-title">Attendance Overview (96%)</h3></div><div style="display: flex; align-items: center; justify-content: space-between;"><div><div style="font-size: 32px; font-weight: 800; color: var(--navy-primary);">96%</div><div style="font-size: 12px; color: var(--text-muted);">24 of 25 Sessions Attended</div></div><div style="width: 140px; height: 110px;"><canvas id="miniAttendanceChart"></canvas></div></div></div>
+              <div class="card-box"><div class="section-header"><h3 class="section-title">Latest Announcements</h3></div><div style="display: flex; flex-direction: column; gap: 12px;"><div style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Live Class Reminder: Today at 7:00 PM</div><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Engr. Tariq Mehmood will cover React 19 Server Components.</div></div><div><div style="font-size: 13px; font-weight: 700; color: var(--navy-primary);">Module 4 Lab Assignment Released</div><div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Full-Stack E-Commerce API Integration is due Aug 04.</div></div></div></div>
+            </section>
+          </main>
+          <aside class="right-sidebar">
+            <div class="widget-card"><div class="widget-header">Upcoming Deadline</div><div style="font-size: 14px; font-weight: 700; color: var(--navy-primary); margin-bottom: 4px;">Full-Stack E-Commerce API Integration</div><div style="font-size: 12px; color: var(--gold-accent); font-weight: 700;">Due Aug 04 • 2 days left</div></div>
+            <div class="widget-card" style="background: var(--navy-primary); color: #FFFFFF; border-color: var(--gold-accent);"><div style="font-size: 15px; font-weight: 800; color: var(--gold-accent); margin-bottom: 4px;">TITAN Certified</div><div style="font-size: 12px; opacity: 0.9;">Web & App Development Track</div></div>
+          </aside>
+        </div>
+
+        <div class="view-page" id="view-courses"><div class="section-header"><div><h2 class="section-title">My Enrolled Course</h2><p class="section-subtitle">Taj Institute of Information Technology</p></div></div><div class="course-card-minimal"><div class="course-card-header"><div class="circle-icon-box lg"><i data-lucide="code"></i></div><div class="course-card-details"><h3 class="course-title-text">Web & App Development</h3><div class="course-meta-text"><span>Instructor: Engr. Tariq Mehmood</span><span>•</span><span>Course Duration: 70 Hours</span></div></div></div><div><div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--navy-primary); margin-bottom: 4px;"><span>Course Progress</span><span>38%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 38%;"></div></div></div><div style="display: flex; justify-content: flex-end;"><button class="btn-primary" onclick="alert('Opening Course Modules...')">Continue Learning →</button></div></div></div>
+
+        <div class="view-page" id="view-assignments"><div class="section-header"><h2 class="section-title">Course Assignment (1 Pending)</h2></div><div class="card-box"><div class="list-item-card" style="padding: 20px; margin-bottom: 0;"><div><div style="font-size: 16px; font-weight: 800; color: var(--navy-primary);">Full-Stack E-Commerce API Integration</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Course: Web & App Development • Due Date: Aug 04, 2026</div></div><button class="btn-primary" onclick="alert('Submission portal opened')">Submit Deliverable</button></div></div></div>
+
+        <div class="view-page" id="view-quizzes">
+          <div id="quiz-list-container">
+            <div class="section-header"><div><h2 class="section-title">Course Assessment Quizzes</h2><p class="section-subtitle">Web & App Development Track • Taj Institute of Information Technology</p></div></div>
+            <div class="stats-grid" style="margin-bottom: 18px;"><div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="check-circle-2"></i></div></div><div class="stat-number" id="dash-recent-score">40 / 50</div><div class="stat-title">Recent Quiz Score</div></div><div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="percent"></i></div></div><div class="stat-number" id="dash-avg-score">80%</div><div class="stat-title">Average Quiz Score</div></div><div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="award"></i></div></div><div class="stat-number" id="dash-completed-quizzes">1</div><div class="stat-title">Completed Quizzes</div></div></div>
+            <div class="quiz-card"><div class="quiz-card-header"><div><h3 class="quiz-title">JavaScript ES6+ & React State Management Quiz</h3><div class="quiz-module-tag">Module 3: React Fundamentals & Hooks</div></div><span class="status-badge present" style="font-size: 11px;">Available</span></div><div class="quiz-meta-grid"><div class="quiz-meta-item"><span class="quiz-meta-label">Total Questions</span><span class="quiz-meta-val">5 Questions</span></div><div class="quiz-meta-item"><span class="quiz-meta-label">Duration</span><span class="quiz-meta-val">10 Mins</span></div><div class="quiz-meta-item"><span class="quiz-meta-label">Total Marks</span><span class="quiz-meta-val">50 Marks</span></div><div class="quiz-meta-item"><span class="quiz-meta-label">Passing Marks</span><span class="quiz-meta-val">35 Marks</span></div><div class="quiz-meta-item"><span class="quiz-meta-label">Difficulty</span><span class="quiz-meta-val">Intermediate</span></div><div class="quiz-meta-item"><span class="quiz-meta-label">Course</span><span class="quiz-meta-val">Web & App Dev</span></div><div class="quiz-meta-item"><span class="quiz-meta-label">Instructor</span><span class="quiz-meta-val">Engr. Tariq</span></div><div class="quiz-meta-item"><span class="quiz-meta-label">Due Date</span><span class="quiz-meta-val">Aug 05, 2026</span></div></div><div style="display: flex; justify-content: flex-end; margin-top: 4px;"><button class="btn-primary" onclick="startQuiz()">Start Quiz →</button></div></div>
+          </div>
+          <div id="quiz-runner-container" class="quiz-runner-card" style="display: none;"><div class="quiz-header-bar"><div><h3 style="font-size: 16px; font-weight: 800; color: var(--navy-primary);">JavaScript ES6+ & React State Management Quiz</h3><div style="font-size: 11px; color: var(--text-muted);">Web & App Development • Module 3: React Fundamentals & Hooks</div></div><div style="display: flex; align-items: center; gap: 16px;"><div style="font-size: 12px; font-weight: 800; color: var(--navy-primary);" id="quiz-progress-text">Question 1 of 5</div><div class="timer-box"><i data-lucide="clock" style="width: 14px; height: 14px; color: var(--gold-accent);"></i><span id="quiz-timer-display">10:00</span></div></div></div><div class="question-card"><div class="question-text" id="quiz-question-text">Loading Question...</div></div><div class="options-container" id="quiz-options-list"></div><div class="quiz-footer-nav"><button class="btn-secondary" id="quiz-prev-btn" onclick="prevQuestion()" disabled>← Previous</button><div style="display: flex; gap: 10px;"><button class="btn-primary" id="quiz-next-btn" onclick="nextQuestion()">Next Question →</button><button class="btn-primary" id="quiz-submit-btn" onclick="submitQuiz()" style="display: none; background: #059669; border-color: #059669;">Submit Quiz ✓</button></div></div></div>
+          <div id="quiz-results-container" class="results-card" style="display: none;"><span class="pass-badge" id="res-status-badge">PASSED</span><h2 style="font-size: 24px; font-weight: 800; color: var(--navy-primary); margin-bottom: 4px;">Quiz Assessment Completed</h2><p style="font-size: 13px; color: var(--text-muted);">JavaScript ES6+ & React State Management Quiz • Web & App Development Track</p><div class="results-metrics-grid"><div class="result-metric-box"><div class="result-metric-val" id="res-score-text">40 / 50</div><div class="result-metric-lbl">Total Score</div></div><div class="result-metric-box"><div class="result-metric-val" id="res-percent-text">80%</div><div class="result-metric-lbl">Percentage</div></div><div class="result-metric-box"><div class="result-metric-val" style="color: #059669;" id="res-correct-text">4 / 5</div><div class="result-metric-lbl">Correct Answers</div></div><div class="result-metric-box"><div class="result-metric-val" style="color: var(--navy-primary);" id="res-time-text">02:45</div><div class="result-metric-lbl">Time Taken</div></div></div><div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 14px;"><button class="btn-primary" onclick="showAnswerReview()">Review Answers</button><button class="btn-secondary" onclick="retakeQuiz()">Retake Quiz</button><button class="btn-secondary" onclick="backToQuizList()">Back to Quizzes List</button></div></div>
+          <div id="quiz-review-container" class="card-box" style="display: none;"><div class="section-header"><div><h3 class="section-title">Quiz Answer Review</h3><p class="section-subtitle">JavaScript ES6+ & React State Management Quiz Breakdown</p></div><button class="btn-secondary btn-sm" onclick="backToQuizList()">← Back to Quiz List</button></div><div id="review-questions-list" style="margin-top: 14px;"></div><div style="display: flex; justify-content: flex-end; margin-top: 14px; gap: 10px;"><button class="btn-secondary" onclick="retakeQuiz()">Retake Quiz</button><button class="btn-primary" onclick="backToQuizList()">Done</button></div></div>
+        </div>
+
+        <div class="view-page" id="view-live"><div class="section-header"><h2 class="section-title">Next Live Class</h2></div><div class="live-class-two-col-card"><div class="live-class-left"><div><h4 class="live-class-title">React 19 & REST API Architecture Live Workshop</h4><div class="live-class-instructor" style="margin-top: 4px;">Instructor: Engr. Tariq Mehmood</div></div><div><button class="btn-primary btn-sm" onclick="alert('Joining Live Session...')">Join Class</button></div></div><div class="live-class-right"><span class="today-badge-top-right">TODAY</span><span class="live-class-time-tag">7:00 PM</span></div></div></div>
+
+        <div class="view-page" id="view-attendance"><div class="section-header"><div><h2 class="section-title">Attendance Register</h2><p class="section-subtitle">Web & App Development • Taj Institute of Information Technology</p></div></div><div class="attn-stats-grid"><div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="calendar"></i></div></div><div class="stat-number">25</div><div class="stat-title">Total Classes</div></div><div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background: var(--status-present-bg); color: var(--status-present-text);"><i data-lucide="check-circle"></i></div></div><div class="stat-number" style="color: var(--status-present-text);">24</div><div class="stat-title">Present</div></div><div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background: var(--status-absent-bg); color: var(--status-absent-text);"><i data-lucide="x-circle"></i></div></div><div class="stat-number" style="color: var(--status-absent-text);">1</div><div class="stat-title">Absent</div></div><div class="stat-card"><div class="stat-top"><div class="stat-icon"><i data-lucide="percent"></i></div></div><div class="stat-number">96%</div><div class="stat-title">Attendance Percentage</div></div></div><div class="attendance-table-container"><table class="attendance-table"><thead><tr><th>Date</th><th>Day</th><th>Course</th><th>Class Time</th><th>Status</th><th>Instructor</th></tr></thead><tbody><tr><td style="font-weight: 700; color: var(--navy-primary);">28 Jul 2026</td><td>Monday</td><td>Web & App Development</td><td>7:00 PM</td><td><span class="status-badge present">Present</span></td><td>Engr. Tariq Mehmood</td></tr><tr><td style="font-weight: 700; color: var(--navy-primary);">29 Jul 2026</td><td>Tuesday</td><td>Web & App Development</td><td>7:00 PM</td><td><span class="status-badge present">Present</span></td><td>Engr. Tariq Mehmood</td></tr><tr><td style="font-weight: 700; color: var(--navy-primary);">30 Jul 2026</td><td>Wednesday</td><td>Web & App Development</td><td>7:00 PM</td><td><span class="status-badge absent">Absent</span></td><td>Engr. Tariq Mehmood</td></tr><tr><td style="font-weight: 700; color: var(--navy-primary);">31 Jul 2026</td><td>Thursday</td><td>Web & App Development</td><td>7:00 PM</td><td><span class="status-badge present">Present</span></td><td>Engr. Tariq Mehmood</td></tr><tr><td style="font-weight: 700; color: var(--navy-primary);">01 Aug 2026</td><td>Friday</td><td>Web & App Development</td><td>7:00 PM</td><td><span class="status-badge present">Present</span></td><td>Engr. Tariq Mehmood</td></tr></tbody></table></div></div>
+
+        <div class="view-page" id="view-certificates"><div class="section-header"><h2 class="section-title">Certificates</h2></div><div class="card-box" style="text-align: center; padding: 40px;"><i data-lucide="award" style="width: 40px; height: 40px; color: var(--text-muted); margin-bottom: 12px;"></i><div style="font-size: 18px; font-weight: 800; color: var(--navy-primary);">No Certificates Yet.</div><p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Complete 100% of Web & App Development to unlock your official Taj Institute of Information Technology certification.</p></div></div>
+
+        <!-- STUDENT: MESSAGES MODULE -->
+        <div class="view-page" id="view-messages">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Course Messages</h2>
+              <p class="section-subtitle">Private direct communication portal with your Faculty Instructor and Administrator.</p>
+            </div>
+          </div>
+
+          <div class="chat-layout-2col">
+            <!-- Left Sidebar Conversations List -->
+            <div class="chat-sidebar-panel">
+              <div class="chat-sidebar-header">
+                <input type="text" id="studentChatSearchInput" class="form-input" placeholder="Search conversations..." oninput="filterStudentConversations()">
+              </div>
+
+              <div class="chat-conversation-list" id="studentChatConversationList">
+                <!-- Dynamically rendered via app.js -->
+              </div>
+            </div>
+
+            <!-- Right Main Chat Box -->
+            <div class="chat-main-panel">
+              <div class="chat-main-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="position: relative;">
+                    <div class="circle-icon-box lg" id="studentChatActiveAvatar"><i data-lucide="user"></i></div>
+                    <div class="online-dot-badge online" id="studentChatActiveOnlineDot"></div>
+                  </div>
+                  <div>
+                    <h3 style="font-size: 15px; font-weight: 800; color: var(--navy-primary);" id="studentChatActiveTitle">Engr. Tariq Mehmood</h3>
+                    <div style="font-size: 11px; color: var(--text-muted);" id="studentChatActiveSub">Faculty Instructor • Web & App Development</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chat-messages-body" id="studentChatMessagesContainer">
+                <!-- Dynamically rendered chat bubbles -->
+              </div>
+
+              <div style="position: relative; width: 100%;">
+                <form onsubmit="handleSendStudentChatMessage(event)" class="chat-input-bar" id="studentChatComposerForm" style="flex-direction: column; align-items: stretch; gap: 6px;">
+                  <!-- File Attachment Preview Bar -->
+                  <div class="attachment-preview-bar" id="studentChatAttachmentPreviewBar" style="display: none;">
+                    <span>📎 Attached File: <strong id="studentAttachedFileNameText">filename.pdf</strong> (<span id="studentAttachedFileSizeText">0 KB</span>)</span>
+                    <button type="button" class="remove-file-btn" onclick="removeStudentChatAttachedFile()" title="Remove file">✕</button>
+                  </div>
+
+                  <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                    <input type="file" id="studentChatFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar,.jpg,.jpeg,.png" style="display: none;" onchange="handleStudentChatFileSelect(event)">
+                    
+                    <button type="button" class="icon-btn" style="border: none; background: transparent; cursor: pointer; font-size: 16px;" title="Attach File" onclick="document.getElementById('studentChatFileInput').click()">📎</button>
+                    
+                    <!-- Emoji Button with Anchored Popover -->
+                    <div style="position: relative; display: inline-block;">
+                      <button type="button" class="icon-btn" id="studentChatEmojiBtn" style="border: none; background: transparent; cursor: pointer; font-size: 16px;" title="Insert Emoji" onclick="toggleStudentChatEmojiPicker(event)">😊</button>
+
+                      <!-- Anchored Emoji Picker Popover -->
+                      <div class="emoji-picker-popover" id="studentChatEmojiPicker" style="display: none;">
+                        <div class="emoji-picker-grid">
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😊')">😊</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😃')">😃</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😄')">😄</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😁')">😁</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😅')">😅</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😂')">😂</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😉')">😉</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😍')">😍</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('😎')">😎</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🤔')">🤔</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🙌')">🙌</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('👏')">👏</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('👍')">👍</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🙏')">🙏</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🤝')">🤝</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('💪')">💪</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🎉')">🎉</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('✨')">✨</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🔥')">🔥</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('⭐')">⭐</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('✅')">✅</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('💯')">💯</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('📚')">📚</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('💻')">💻</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('📝')">📝</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🎯')">🎯</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('💡')">💡</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🚀')">🚀</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('💬')">💬</span>
+                          <span class="emoji-picker-item" onclick="insertStudentEmoji('🎓')">🎓</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <textarea id="studentChatMessageInput" class="form-textarea" placeholder="Type your message..." style="flex: 1; min-height: 40px; height: 40px; max-height: 100px; resize: none; padding: 8px 12px; font-size: 13px;" autocomplete="off"></textarea>
+                    
+                    <button type="submit" class="btn-primary" style="padding: 8px 20px; font-size: 13px; font-weight: 700;">Send</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view-page" id="view-profile"><div class="profile-banner-card"><div class="profile-user-group"><div class="circle-icon-box xl"><i data-lucide="user"></i></div><div><h1 style="font-size: 22px; font-weight: 800;">Muhammad Ahmed</h1><div style="font-size: 13px; color: var(--gold-accent); font-weight: 700; margin-top: 2px;">Enrolled: Web & App Development</div><div class="profile-pills-row"><span class="profile-pill">ID: TITAN-2026-1024</span><span class="profile-pill">Batch 08</span><span class="profile-pill">Enrolled: 15 Jul 2026</span><span class="status-badge present" style="margin-left: 4px;">Active</span></div></div></div></div><div class="profile-grid-2col"><div style="display: flex; flex-direction: column; gap: 18px;"><div class="card-box"><div class="section-header"><h3 class="section-title">Personal Information</h3></div><div class="info-list-group"><div class="info-item-row"><span class="info-label">Full Name</span><span class="info-value">Muhammad Ahmed</span></div><div class="info-item-row"><span class="info-label">Father Name</span><span class="info-value">Tariq Ahmed</span></div><div class="info-item-row"><span class="info-label">Email Address</span><span class="info-value">ahmed.student@titan.edu.pk</span></div><div class="info-item-row"><span class="info-label">Phone Number</span><span class="info-value">+92 300 1234567</span></div><div class="info-item-row"><span class="info-label">CNIC (Masked)</span><span class="info-value">45203-*******-1</span></div><div class="info-item-row"><span class="info-label">Date of Birth</span><span class="info-value">14 March 2002</span></div><div class="info-item-row"><span class="info-label">Gender</span><span class="info-value">Male</span></div><div class="info-item-row"><span class="info-label">City</span><span class="info-value">Sukkur, Pakistan</span></div><div class="info-item-row"><span class="info-label">Address</span><span class="info-value">House #14, Military Road, Sukkur</span></div></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Academic Information</h3></div><div class="info-list-group"><div class="info-item-row"><span class="info-label">Enrolled Course</span><span class="info-value">Web & App Development</span></div><div class="info-item-row"><span class="info-label">Batch</span><span class="info-value">Batch 08</span></div><div class="info-item-row"><span class="info-label">Instructor</span><span class="info-value">Engr. Tariq Mehmood</span></div><div class="info-item-row"><span class="info-label">Class Schedule</span><span class="info-value">Mon - Fri • 7:00 PM - 9:00 PM</span></div><div class="info-item-row"><span class="info-label">Course Duration</span><span class="info-value">70 Hours (3 Months)</span></div><div class="info-item-row"><span class="info-label">Enrollment Date</span><span class="info-value">15 July 2026</span></div><div class="info-item-row"><span class="info-label">Expected Completion</span><span class="info-value">15 October 2026</span></div></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Emergency Contact</h3></div><div class="info-list-group"><div class="info-item-row"><span class="info-label">Contact Name</span><span class="info-value">Tariq Ahmed</span></div><div class="info-item-row"><span class="info-label">Relationship</span><span class="info-value">Father</span></div><div class="info-item-row"><span class="info-label">Phone Number</span><span class="info-value">+92 301 7654321</span></div></div></div></div><div style="display: flex; flex-direction: column; gap: 18px;"><div class="card-box"><div class="section-header"><h3 class="section-title">Learning Progress Overview</h3></div><div class="info-list-group"><div class="info-item-row"><span class="info-label">Course Progress</span><span class="info-value" style="color: var(--gold-accent);">38%</span></div><div class="info-item-row"><span class="info-label">Attendance Rate</span><span class="info-value" style="color: #059669;">96%</span></div><div class="info-item-row"><span class="info-label">Completed Assignments</span><span class="info-value">3</span></div><div class="info-item-row"><span class="info-label">Pending Assignments</span><span class="info-value">1</span></div><div class="info-item-row"><span class="info-label">Completed Quizzes</span><span class="info-value">1</span></div><div class="info-item-row"><span class="info-label">Average Quiz Score</span><span class="info-value">80%</span></div></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Acquired Skills</h3></div><div class="skills-badge-list"><span class="skill-tag">HTML5</span><span class="skill-tag">CSS3</span><span class="skill-tag">JavaScript</span><span class="skill-tag">React 19</span><span class="skill-tag">Tailwind CSS</span></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Certifications</h3></div><div style="font-size: 13px; color: var(--text-muted);">No certificates earned yet.</div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Account Preferences</h3></div><div style="display: flex; flex-direction: column; gap: 8px;"><button class="btn-secondary" style="justify-content: flex-start;" onclick="switchView('settings')">🔒 Change Password</button><button class="btn-secondary" style="justify-content: flex-start;" onclick="switchView('settings')">✏️ Update Profile Details</button><button class="btn-secondary" style="justify-content: flex-start;" onclick="showToast('Notification settings opened')">🔔 Notification Preferences</button></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Quick Actions</h3></div><div style="display: flex; flex-direction: column; gap: 8px;"><button class="btn-primary" style="justify-content: flex-start;" onclick="switchView('courses')">▶ Continue Learning</button><button class="btn-secondary" style="justify-content: flex-start;" onclick="switchView('attendance')">📅 View Attendance</button><button class="btn-secondary" style="justify-content: flex-start;" onclick="switchView('assignments')">📝 View Assignments</button><button class="btn-secondary" style="justify-content: flex-start;" onclick="alert('Downloading Student ID Card (TITAN-2026-1024)...')">🪪 Download Student ID</button><button class="btn-secondary" style="justify-content: flex-start;" onclick="showToast('TITAN Sukkur Support Desk: support@titan.edu.pk')">💬 Contact Support</button></div></div></div></div></div>
+
+        <div class="view-page" id="view-settings"><div class="section-header"><div><h2 class="section-title">Student Account Settings</h2><p class="section-subtitle">Manage account details, security preferences, and notifications for Muhammad Ahmed</p></div></div><div class="profile-grid-2col"><div style="display: flex; flex-direction: column; gap: 18px;"><div class="card-box"><div class="section-header"><h3 class="section-title">Account Settings</h3></div><div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-input" value="Muhammad Ahmed"></div><div class="form-group"><label class="form-label">Email Address</label><input type="email" class="form-input" value="ahmed.student@titan.edu.pk"></div><div class="form-group"><label class="form-label">Phone Number</label><input type="text" class="form-input" value="+92 300 1234567"></div><div class="form-group"><label class="form-label">Student ID (Read Only)</label><input type="text" class="form-input" value="TITAN-2026-1024" readonly></div><div class="form-group"><label class="form-label">Batch (Read Only)</label><input type="text" class="form-input" value="Batch 08" readonly></div><div style="margin-top: 14px;"><button class="btn-primary" onclick="showToast('Account profile updated successfully!')">Update Profile</button></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Password & Security</h3></div><div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-input" placeholder="••••••••••••"></div><div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-input" placeholder="••••••••••••"></div><div class="form-group"><label class="form-label">Confirm New Password</label><input type="password" class="form-input" placeholder="••••••••••••"></div><div style="margin-top: 14px;"><button class="btn-secondary" onclick="showToast('Password changed successfully!')">Change Password</button></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Portal Preferences</h3></div><div class="form-group"><label class="form-label">Language</label><select class="form-select"><option selected>English</option><option>Urdu (اردو)</option></select></div><div class="form-group"><label class="form-label">Time Zone</label><select class="form-select"><option selected>Pakistan Standard Time (PKT • GMT+5)</option><option>UTC / GMT</option></select></div><div class="form-group"><label class="form-label">Theme</label><select class="form-select" disabled style="background: var(--bg-main);"><option selected>Light Mode (Default Enterprise Theme)</option></select></div></div></div><div style="display: flex; flex-direction: column; gap: 18px;"><div class="card-box"><div class="section-header"><h3 class="section-title">Notification Settings</h3></div><div class="toggle-switch-item"><span class="toggle-label">Email Notifications</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-switch-item"><span class="toggle-label">Assignment Reminders</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-switch-item"><span class="toggle-label">Quiz Notifications</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-switch-item"><span class="toggle-label">Live Class Reminders</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-switch-item"><span class="toggle-label">Announcements</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-switch-item"><span class="toggle-label">Certificate Notifications</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Privacy Control</h3></div><div class="toggle-switch-item"><span class="toggle-label">Show Profile to Instructors</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-switch-item"><span class="toggle-label">Receive Course Updates</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div><div class="toggle-switch-item"><span class="toggle-label">Receive Promotional Emails</span><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div></div><div class="card-box"><div class="section-header"><h3 class="section-title">Active Login Sessions</h3></div><div class="info-list-group" style="margin-bottom: 14px;"><div class="info-item-row"><span class="info-label">Current Device</span><span class="info-value">Windows 11 • Chrome</span></div><div class="info-item-row"><span class="info-label">Location</span><span class="info-value">Sukkur, Pakistan</span></div><div class="info-item-row"><span class="info-label">Status</span><span class="status-badge present">Active Now</span></div></div><button class="btn-secondary" onclick="showToast('Logged out from all other active sessions')">Log Out from Other Devices</button></div><div class="card-box"><div class="section-header"><h3 class="section-title">Account Actions</h3></div><div style="display: flex; gap: 10px; flex-wrap: wrap;"><button class="btn-primary" onclick="showToast('All settings changes saved!')">Save Changes</button><button class="btn-secondary" onclick="showToast('Settings reset to default')">Reset Settings</button><button class="btn-secondary" style="color: #DC2626; border-color: #EF4444;" onclick="confirmLogout()">Log Out</button></div></div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COURSE LESSON VIEW MODAL -->
+  <div class="modal-overlay" id="courseLessonViewModal" style="display: none;">
+    <div class="modal-card" style="max-width: 680px; width: 90%;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 class="modal-title" id="viewLessonModalTitle" style="font-size: 16px; font-weight: 800; color: var(--navy-primary);">Lesson Content Preview</h3>
+        <button type="button" class="modal-close-btn" onclick="closeCourseLessonViewModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">✕</button>
+      </div>
+      
+      <div id="viewLessonModalContentContainer" style="margin-bottom: 20px; min-height: 240px; display: flex; align-items: center; justify-content: center; background: #F8F9FC; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px;">
+        <!-- Content Preview dynamically rendered by app.js -->
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 14px;">
+        <button type="button" class="btn-secondary" onclick="closeCourseLessonViewModal()">Close</button>
+        <button type="button" class="btn-primary" id="viewLessonModalDownloadBtn" onclick="downloadActiveViewLessonFile()">Download File</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COURSE LESSON EDIT MODAL -->
+  <div class="modal-overlay" id="courseLessonEditModal" style="display: none;">
+    <div class="modal-card" style="max-width: 540px; width: 90%;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 class="modal-title" style="font-size: 16px; font-weight: 800; color: var(--navy-primary);">Edit Published Lesson</h3>
+        <button type="button" class="modal-close-btn" onclick="closeCourseLessonEditModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">✕</button>
+      </div>
+
+      <form id="editLessonForm" onsubmit="handleSaveCourseLessonEdit(event)">
+        <input type="hidden" id="editLessonIdInput">
+        <div class="form-group">
+          <label class="form-label">Module Title / Number</label>
+          <input type="text" id="editLessonModuleInput" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lesson Title</label>
+          <input type="text" id="editLessonTitleInput" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea id="editLessonDescInput" class="form-textarea" placeholder="Lesson summary or instructions..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">File Name</label>
+          <input type="text" id="editLessonFileNameInput" class="form-input" required>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 16px;">
+          <button type="button" class="btn-secondary" onclick="closeCourseLessonEditModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- COURSE LESSON DELETE CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="courseLessonDeleteModal" style="display: none;">
+    <div class="modal-card" style="max-width: 420px; width: 90%; text-align: center; padding: 24px;">
+      <div style="font-size: 36px; margin-bottom: 12px;">🗑️</div>
+      <h3 style="font-size: 18px; font-weight: 800; color: var(--navy-primary); margin-bottom: 8px;">Delete Lesson?</h3>
+      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">Are you sure you want to permanently delete this lesson?</p>
+      
+      <div style="display: flex; justify-content: center; gap: 12px;">
+        <button type="button" class="btn-secondary" onclick="closeCourseLessonDeleteModal()" style="min-width: 100px;">Cancel</button>
+        <button type="button" class="btn-primary" onclick="confirmDeleteCourseLesson()" style="min-width: 100px; background: #DC2626; border-color: #DC2626;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HIDDEN REPLACE FILE INPUT -->
+  <input type="file" id="replaceLessonFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.jpg,.jpeg,.png,.mp4" style="display: none;" onchange="handleReplaceLessonFileSelected(event)">
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
